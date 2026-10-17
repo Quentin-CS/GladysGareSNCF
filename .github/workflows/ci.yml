@@ -1,0 +1,92 @@
+# -----------------------------------------------------------------------------
+# Continuous integration: runs on every push and every pull request.
+#
+# Three gates, the same ones every developer inspired by this template should
+# keep:
+#   1. Prettier  -> consistent formatting (no style debates in reviews);
+#   2. ESLint    -> catch real mistakes (undefined vars, dead code, ...);
+#   3. Tests     -> `node --test`, the built-in runner (no extra dependency).
+#
+# Runs on Node 24, the version the Docker image ships with (see the Dockerfile),
+# so the check exercises the exact runtime the integration runs on, and on
+# Node 22, the oldest one `engines` accepts.
+#
+# Pull requests also build the image (amd64, not pushed): a Dockerfile change,
+# such as the pinned AirSend Web Service checksum, would otherwise only fail at
+# release time.
+# -----------------------------------------------------------------------------
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    name: Lint & test (Node ${{ matrix.node }})
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting (Prettier)
+        run: npm run format:check
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+  store:
+    # The store indexer's own admission checks (manifest schema, version
+    # couplings, cover, image). Pull requests only: a release commit reaches main
+    # before build.yml has pushed its image, and the check refuses a missing one.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Store admission checks
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Validate like the store indexer
+        run: npx --yes github:GladysAssistant/integration-store .
+
+  docker:
+    # Build the image the way build.yml does, without pushing it.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Docker build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build (amd64, not pushed)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64
+          push: false

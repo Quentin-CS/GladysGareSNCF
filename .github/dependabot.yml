@@ -1,0 +1,27 @@
+# Weekly update PRs for the npm dependencies (the Gladys SDK first of all) and
+# monthly ones for the GitHub Actions and the Docker base image. Development
+# tools are grouped in one PR.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-dependencies:
+        dependency-type: development
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+    # Node 26 only becomes LTS on 2026-10-28: stay on the current major until then,
+    # and drop this rule once it is LTS.
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major']

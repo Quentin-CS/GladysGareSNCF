@@ -1,0 +1,264 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "GareSNCF",
+  "description": {
+    "fr": "Consulte les prochains départs et retards des trains SNCF.",
+    "en": "Shows upcoming SNCF train departures and delays."
+  },
+  "version": "1.0.0",
+  "docker_image": "ghcr.io/quentin-cs/gladysgaresncf:1.0.0",
+  "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/Quentin-CS/GladysGareSNCF/main/cover.png",
+  "categories": ["services"],
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "sncf_api",
+      "type": "section",
+      "label": {
+        "fr": "API SNCF",
+        "en": "SNCF API"
+      },
+      "description": {
+        "fr": "Un jeton gratuit est nécessaire. Demandez-le sur numerique.sncf.com/startup/api/token-developpeur/.",
+        "en": "A free token is required. Request one at numerique.sncf.com/startup/api/token-developpeur/."
+      },
+      "links": [
+        {
+          "url": "https://numerique.sncf.com/startup/api/token-developpeur/",
+          "label": {
+            "fr": "Demander un jeton API",
+            "en": "Request an API token"
+          }
+        }
+      ]
+    },
+    {
+      "key": "api_token",
+      "type": "secret",
+      "label": {
+        "fr": "Jeton API SNCF",
+        "en": "SNCF API token"
+      },
+      "description": {
+        "fr": "Jeton personnel SNCF. Il est transmis au conteneur et ne doit pas être partagé.",
+        "en": "Your personal SNCF token. It is passed to the container and must not be shared."
+      },
+      "required": true
+    },
+    {
+      "key": "station_id",
+      "type": "string",
+      "label": {
+        "fr": "Identifiant Navitia de la gare",
+        "en": "Navitia station ID"
+      },
+      "description": {
+        "fr": "Utilisez l’action Rechercher une gare pour trouver son identifiant stop_area.",
+        "en": "Use the Search for a station action to find its stop_area identifier."
+      },
+      "placeholder": {
+        "fr": "stop_area:OCE:SA:...",
+        "en": "stop_area:OCE:SA:..."
+      },
+      "required": true
+    },
+    {
+      "key": "direction",
+      "type": "select",
+      "label": {
+        "fr": "Tableau affiché",
+        "en": "Displayed board"
+      },
+      "default": "departures",
+      "options": [
+        {
+          "value": "departures",
+          "label": {
+            "fr": "Départs",
+            "en": "Departures"
+          }
+        },
+        {
+          "value": "arrivals",
+          "label": {
+            "fr": "Arrivées",
+            "en": "Arrivals"
+          }
+        }
+      ]
+    },
+    {
+      "key": "poll_frequency",
+      "type": "number",
+      "label": {
+        "fr": "Fréquence de mise à jour (secondes)",
+        "en": "Refresh interval (seconds)"
+      },
+      "default": 120,
+      "min": 60,
+      "max": 3600
+    },
+    {
+      "key": "delay_threshold",
+      "type": "number",
+      "label": {
+        "fr": "Seuil de retard pour déclencher une scène (minutes)",
+        "en": "Delay threshold for scene trigger (minutes)"
+      },
+      "default": 5,
+      "min": 1,
+      "max": 120
+    }
+  ],
+  "actions": [
+    {
+      "key": "tester_api",
+      "label": {
+        "fr": "Tester l’API SNCF",
+        "en": "Test the SNCF API"
+      },
+      "timeout_seconds": 20
+    },
+    {
+      "key": "rechercher_gare",
+      "label": {
+        "fr": "Rechercher une gare",
+        "en": "Search for a station"
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "query",
+          "type": "string",
+          "label": {
+            "fr": "Nom de la gare",
+            "en": "Station name"
+          },
+          "required": true
+        }
+      ]
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "train_en_retard",
+      "label": {
+        "fr": "Train en retard",
+        "en": "Delayed train"
+      },
+      "description": {
+        "fr": "Déclenché lorsqu’un départ ou une arrivée dépasse le seuil de retard configuré.",
+        "en": "Fires when a departure or arrival exceeds the configured delay threshold."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "string",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "fr": "Train",
+            "en": "Train"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "fr": "Destination",
+            "en": "Destination"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "fr": "Retard en minutes",
+            "en": "Delay in minutes"
+          }
+        },
+        {
+          "key": "departure_time",
+          "type": "string",
+          "label": {
+            "fr": "Heure prévue/estimée",
+            "en": "Scheduled/estimated time"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "prochains_trains",
+      "label": {
+        "fr": "Récupérer les prochains trains",
+        "en": "Get upcoming trains"
+      },
+      "description": {
+        "fr": "Actualise le tableau et renvoie le prochain train, sa destination et le nombre de minutes restant.",
+        "en": "Refreshes the board and returns the next train, its destination and minutes remaining."
+      },
+      "timeout_seconds": 20,
+      "outputs": [
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "fr": "Trains retournés",
+            "en": "Trains returned"
+          }
+        },
+        {
+          "key": "next_train",
+          "type": "string",
+          "label": {
+            "fr": "Prochain train",
+            "en": "Next train"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "fr": "Destination",
+            "en": "Destination"
+          }
+        },
+        {
+          "key": "minutes",
+          "type": "number",
+          "label": {
+            "fr": "Minutes avant le départ",
+            "en": "Minutes until departure"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "tableau_gare_sncf",
+      "label": {
+        "fr": "Tableau de gare SNCF",
+        "en": "SNCF station board"
+      },
+      "description": {
+        "fr": "Prochains départs ou arrivées et retards en temps réel.",
+        "en": "Upcoming real-time departures or arrivals and delays."
+      },
+      "icon": "train-front",
+      "action_timeout_seconds": 15
+    }
+  ]
+}
