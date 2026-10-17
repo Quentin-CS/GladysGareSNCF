@@ -6,8 +6,8 @@
     "fr": "Consulte les prochains départs et retards des trains SNCF.",
     "en": "Shows upcoming SNCF train departures and delays."
   },
-  "version": "1.0.0",
-  "docker_image": "ghcr.io/quentin-cs/gladysgaresncf:1.0.0",
+  "version": "2.0.0",
+  "docker_image": "ghcr.io/quentin-cs/gladysgaresncf:2.0.0",
   "gladys_version": ">=5.1.0",
   "cover_image": "https://raw.githubusercontent.com/Quentin-CS/GladysGareSNCF/main/cover.png",
   "categories": ["services"],
