@@ -1,13 +1,33 @@
 import { createLogger } from '@gladysassistant/integration-sdk';
-import { refreshTimetable } from './timetable.js';
+import { refreshTimetable, stationIdFromExternalId } from './timetable.js';
 
 const logger = createLogger({ name: 'widgets' });
 export const WIDGET_KEY = 'tableau_gare_sncf';
 
+async function selectedStation(gladys, settings, config) {
+  if (settings?.device) {
+    return { id: stationIdFromExternalId(gladys, settings.device), externalId: settings.device };
+  }
+  if (config.station_id) {
+    const ids = gladys.externalIds('gare-sncf', config.station_id);
+    return { id: config.station_id, externalId: ids.device };
+  }
+  const devices = await gladys.getDevices();
+  const device = devices.find((entry) => entry.external_id?.includes(':gare-sncf:'));
+  if (!device) throw new Error('Ajoutez d’abord une gare depuis l’onglet Découverte.');
+  return {
+    id: stationIdFromExternalId(gladys, device.external_id),
+    externalId: device.external_id,
+  };
+}
+
 export const WIDGETS = {
   [WIDGET_KEY]: {
-    async get(gladys, { config }) {
-      const { trains } = await refreshTimetable(gladys, config);
+    async get(gladys, { config, settings = {} }) {
+      const station = await selectedStation(gladys, settings, config);
+      const { trains } = await refreshTimetable(gladys, config, {
+        stationId: station.id,
+      });
       return {
         ttl_seconds: Math.min(300, config.poll_frequency),
         components: [
@@ -16,7 +36,7 @@ export const WIDGETS = {
             label: { fr: 'Actualiser', en: 'Refresh' },
             icon: 'refresh-cw',
             style: 'secondary',
-            action: { key: 'actualiser' },
+            action: { key: 'actualiser', params: { device: station.externalId } },
           },
           {
             type: 'card-list',
@@ -34,9 +54,12 @@ export const WIDGETS = {
         ],
       };
     },
-    async action(gladys, { actionKey, config }) {
+    async action(gladys, { actionKey, params, config }) {
       if (actionKey !== 'actualiser') throw new Error(`Action inconnue : ${actionKey}`);
-      await refreshTimetable(gladys, config, { force: true });
+      await refreshTimetable(gladys, config, {
+        stationId: stationIdFromExternalId(gladys, params.device),
+        force: true,
+      });
       logger.info('Widget timetable manually refreshed');
       return { fr: 'Tableau des trains actualisé.', en: 'Train board refreshed.' };
     },

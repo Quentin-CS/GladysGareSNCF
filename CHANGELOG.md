@@ -4,8 +4,7 @@ Les changements notables de GareSNCF sont consignés ici.
 
 ## [Unreleased]
 
-## [2.0.0] - 2026-10-17
+### Changed
 
-### Added
-
-- Première version de l’intégration externe Gladys : recherche de gares, horaires SNCF, widget de tableau, capteur, déclencheur de retard et action de scène.
+- La recherche et la sélection des gares passent par l’écran Découverte de Gladys ; plusieurs gares peuvent être suivies simultanément.
+- Les scènes et widgets peuvent cibler une gare ajoutée individuellement.

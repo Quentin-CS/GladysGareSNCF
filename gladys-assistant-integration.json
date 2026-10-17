@@ -3,8 +3,8 @@
   "type": "device",
   "name": "GareSNCF",
   "description": {
-    "fr": "Consulte les prochains départs et retards des trains SNCF.",
-    "en": "Shows upcoming SNCF train departures and delays."
+    "fr": "Recherche des gares SNCF et suit plusieurs horaires et retards.",
+    "en": "Searches SNCF stations and tracks multiple timetables and delays."
   },
   "version": "2.0.0",
   "docker_image": "ghcr.io/quentin-cs/gladysgaresncf:2.0.0",
@@ -48,19 +48,19 @@
       "required": true
     },
     {
-      "key": "station_id",
+      "key": "station_search",
       "type": "string",
       "label": {
-        "fr": "Identifiant Navitia de la gare",
-        "en": "Navitia station ID"
+        "fr": "Rechercher des gares",
+        "en": "Search for stations"
       },
       "description": {
-        "fr": "Utilisez l’action Rechercher une gare pour trouver son identifiant stop_area.",
-        "en": "Use the Search for a station action to find its stop_area identifier."
+        "fr": "Saisissez un nom de gare ou de ville, puis lancez la découverte pour sélectionner une ou plusieurs gares.",
+        "en": "Enter a station or city name, then scan to select one or more stations."
       },
       "placeholder": {
-        "fr": "stop_area:OCE:SA:...",
-        "en": "stop_area:OCE:SA:..."
+        "fr": "Langon, Bordeaux, Paris…",
+        "en": "Langon, Bordeaux, Paris…"
       },
       "required": true
     },
@@ -96,8 +96,8 @@
         "fr": "Fréquence de mise à jour (secondes)",
         "en": "Refresh interval (seconds)"
       },
-      "default": 120,
-      "min": 60,
+      "default": 600,
+      "min": 300,
       "max": 3600
     },
     {
@@ -154,8 +154,9 @@
       },
       "fields": [
         {
-          "key": "station",
-          "type": "string",
+          "key": "device",
+          "type": "select",
+          "source": "devices",
           "label": {
             "fr": "Gare",
             "en": "Station"
@@ -171,6 +172,22 @@
         }
       ],
       "variables": [
+        {
+          "key": "station",
+          "type": "string",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "fr": "Train",
+            "en": "Train"
+          }
+        },
         {
           "key": "destination",
           "type": "string",
@@ -243,6 +260,18 @@
             "en": "Minutes until departure"
           }
         }
+      ],
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          },
+          "required": true
+        }
       ]
     }
   ],
@@ -258,7 +287,19 @@
         "en": "Upcoming real-time departures or arrivals and delays."
       },
       "icon": "train-front",
-      "action_timeout_seconds": 15
+      "action_timeout_seconds": 15,
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "fr": "Gare à afficher",
+            "en": "Station to display"
+          },
+          "required": true
+        }
+      ]
     }
   ]
 }

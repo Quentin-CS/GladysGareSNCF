@@ -4,7 +4,7 @@ Consignes du projet pour les assistants de code et les contributeurs.
 
 ## Projet
 
-GareSNCF est une intégration externe Gladys en JavaScript ESM, basée sur le [template officiel](https://github.com/GladysAssistant/integration-template-js) et le SDK `@gladysassistant/integration-sdk`. Elle interroge l’API officielle SNCF/ Navitia avec le jeton fourni par l’utilisateur.
+GareSNCF est une intégration externe Gladys en JavaScript ESM, basée sur le [template officiel](https://github.com/GladysAssistant/integration-template-js) et le SDK `@gladysassistant/integration-sdk`. Elle interroge l’API SNCF/ Navitia avec le jeton fourni par l’utilisateur.
 
 ## Commandes
 
@@ -18,10 +18,11 @@ npm run format
 
 ## Règles
 
-- Garder les clés du manifeste, les identifiants externes, les clés de scènes et les clés de widget stables : ils peuvent être référencés par les scènes et tableaux de bord.
+- Garder stables les clés du manifeste, les identifiants externes, les clés de scènes et de widgets.
+- Chaque appareil représente une gare choisie dans la découverte. L’identifiant externe reprend l’identifiant stable `stop_area` fourni par Navitia.
 - Ne jamais journaliser le jeton API. L’envoyer uniquement dans l’en-tête d’authentification HTTPS vers `api.sncf.com`.
 - Les tests ne doivent pas appeler le réseau ; simuler `fetch`.
 - Maintenir les textes utilisateur en français et en anglais, ainsi que `docs/fr.md` et `docs/en.md`.
-- Ajouter chaque changement visible à `CHANGELOG.md` sous `## [Unreleased]`.
-- Garder `version` dans `package.json`, le manifeste et `docker_image` synchronisés via le workflow Release.
-- Toute capacité déclarée dans `gladys-assistant-integration.json` doit correspondre à un gestionnaire dans le code et être couverte par les tests pertinents.
+- Ajouter les changements visibles à `CHANGELOG.md` sous `## [Unreleased]`.
+- Les versions sont gérées par le workflow Release ; ne pas modifier manuellement le numéro dans `package.json`, le lockfile ou le manifeste.
+- Toute capacité déclarée dans le manifeste doit correspondre à un gestionnaire dans le code et être couverte par des tests pertinents.
