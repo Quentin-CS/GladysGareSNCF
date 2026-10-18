@@ -23,6 +23,13 @@ const config = normalizeConfig({
   station_search: 'Langon',
   direction: 'departures',
 });
+function formatNavitiaDate(date) {
+  const part = (value) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}${part(date.getMonth() + 1)}${part(date.getDate())}T${part(date.getHours())}${part(date.getMinutes())}${part(date.getSeconds())}`;
+}
+
+const sampleDeparture = new Date(Date.now() + 2 * 60 * 60 * 1000);
+const sampleBaseDeparture = new Date(sampleDeparture.getTime() - 4 * 60 * 1000);
 const sample = {
   departures: [
     {
@@ -32,8 +39,8 @@ const sample = {
         commercial_mode: 'TGV INOUI',
       },
       stop_date_time: {
-        departure_date_time: '20261017T235900',
-        base_departure_date_time: '20261017T235500',
+        departure_date_time: formatNavitiaDate(sampleDeparture),
+        base_departure_date_time: formatNavitiaDate(sampleBaseDeparture),
         platform: '4',
       },
       links: [{ type: 'vehicle_journey', id: 'vj-1' }],
