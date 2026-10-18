@@ -4,6 +4,8 @@ Les changements notables de GareSNCF sont consignés ici.
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-10-18
+
 ### Added
 
 - Liste des gares suivies avec retrait depuis les appareils Gladys et dédoublonnage par identifiant SNCF.
