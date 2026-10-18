@@ -3,6 +3,7 @@ import { normalizeConfig } from './src/config.js';
 import {
   discoverStations,
   refreshTimetable,
+  recordTimetableError,
   resetTimetableCache,
   searchStations,
   stationIdFromExternalId,
@@ -16,12 +17,15 @@ let config = normalizeConfig();
 
 gladys.onScanRequest(async () => discoverStations(gladys, config));
 gladys.onPoll(async (device) => {
+  let stationId;
   try {
+    stationId = stationIdFromExternalId(gladys, device.external_id);
     await refreshTimetable(gladys, config, {
-      stationId: stationIdFromExternalId(gladys, device.external_id),
+      stationId,
       stationName: device.name,
     });
   } catch (error) {
+    if (stationId) recordTimetableError(stationId, error);
     logger.error(`SNCF timetable refresh failed for ${device?.name ?? 'unknown station'}`, error);
   }
 });
@@ -34,9 +38,11 @@ for (const [key, handler] of Object.entries(SCENE_ACTIONS)) {
 }
 for (const [key, widget] of Object.entries(WIDGETS)) {
   gladys.onWidgetGet(key, (request) => widget.get(gladys, { ...request, config }));
-  gladys.onWidgetAction(key, (actionKey, params, context) =>
-    widget.action(gladys, { actionKey, params, ...context, config }),
-  );
+  if (widget.action) {
+    gladys.onWidgetAction(key, (actionKey, params, context) =>
+      widget.action(gladys, { actionKey, params, ...context, config }),
+    );
+  }
 }
 
 gladys.onConfigUpdated(async (raw) => {

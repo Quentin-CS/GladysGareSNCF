@@ -26,3 +26,7 @@ npm run format
 - Ajouter les changements visibles à `CHANGELOG.md` sous `## [Unreleased]`.
 - Les versions sont gérées par le workflow Release ; ne pas modifier manuellement le numéro dans `package.json`, le lockfile ou le manifeste.
 - Toute capacité déclarée dans le manifeste doit correspondre à un gestionnaire dans le code et être couverte par des tests pertinents.
+- Les filtres globaux s’appliquent au tableau et aux événements ; les filtres d’instance de widget ne modifient que son affichage.
+- Les déclencheurs retard/suppression/changement de voie doivent rester dédupliqués par transition et par train.
+- Le SDK ne supprime pas un appareil Gladys : documenter le retrait via l’écran natif des appareils, ne pas prétendre pouvoir le faire depuis le widget.
+- Ne jamais déduire un quota restant si l’API ne le fournit pas ; afficher uniquement les erreurs HTTP et l’en-tête `Retry-After` lorsqu’il existe.

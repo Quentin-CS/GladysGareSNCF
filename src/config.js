@@ -6,6 +6,11 @@ export const DEFAULT_CONFIG = {
   direction: 'departures',
   poll_frequency: 600,
   delay_threshold: 5,
+  line_filter: '',
+  destination_filter: '',
+  transport_filter: '',
+  alert_cancellations: true,
+  alert_platform_changes: true,
 };
 
 export function normalizeConfig(raw = {}) {
@@ -25,5 +30,10 @@ export function normalizeConfig(raw = {}) {
       1,
       Math.min(120, Number(raw.delay_threshold) || DEFAULT_CONFIG.delay_threshold),
     ),
+    line_filter: String(raw.line_filter ?? '').trim(),
+    destination_filter: String(raw.destination_filter ?? '').trim(),
+    transport_filter: String(raw.transport_filter ?? '').trim(),
+    alert_cancellations: raw.alert_cancellations !== false,
+    alert_platform_changes: raw.alert_platform_changes !== false,
   };
 }

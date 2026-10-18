@@ -110,6 +110,60 @@
       "default": 5,
       "min": 1,
       "max": 120
+    },
+    {
+      "key": "line_filter",
+      "type": "string",
+      "label": {
+        "fr": "Filtre sur la ligne ou le code du train (facultatif)",
+        "en": "Filter by line or train code (optional)"
+      },
+      "description": {
+        "fr": "Laissez vide pour tout afficher.",
+        "en": "Leave empty to show all results."
+      }
+    },
+    {
+      "key": "destination_filter",
+      "type": "string",
+      "label": {
+        "fr": "Filtre sur la destination (facultatif)",
+        "en": "Filter by destination (optional)"
+      },
+      "description": {
+        "fr": "Laissez vide pour tout afficher.",
+        "en": "Leave empty to show all results."
+      }
+    },
+    {
+      "key": "transport_filter",
+      "type": "string",
+      "label": {
+        "fr": "Filtre sur le type de transport (facultatif)",
+        "en": "Filter by transport type (optional)"
+      },
+      "description": {
+        "fr": "Laissez vide pour tout afficher.",
+        "en": "Leave empty to show all results."
+      }
+    },
+    {
+      "key": "alert_cancellations",
+      "type": "boolean",
+      "label": {
+        "fr": "Déclencher une scène lors d’une suppression",
+        "en": "Trigger a scene when a train is cancelled"
+      },
+      "default": true
+    },
+    {
+      "key": "alert_platform_changes",
+      "type": "boolean",
+      "label": {
+        "fr": "Déclencher une scène lors d’un changement de voie",
+        "en": "Trigger a scene when the platform changes"
+      },
+      "default": true
     }
   ],
   "actions": [
@@ -211,6 +265,182 @@
             "fr": "Heure prévue/estimée",
             "en": "Scheduled/estimated time"
           }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "fr": "Voie",
+            "en": "Platform"
+          }
+        }
+      ]
+    },
+    {
+      "key": "train_supprime",
+      "label": {
+        "fr": "Train supprimé",
+        "en": "Cancelled train"
+      },
+      "description": {
+        "fr": "Déclenché lorsqu’un train est indiqué comme supprimé par l’API.",
+        "en": "Fires when the API marks a train as cancelled."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "fr": "Train",
+            "en": "Train"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "station",
+          "type": "string",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "fr": "Train",
+            "en": "Train"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "fr": "Destination",
+            "en": "Destination"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "fr": "Retard en minutes",
+            "en": "Delay in minutes"
+          }
+        },
+        {
+          "key": "departure_time",
+          "type": "string",
+          "label": {
+            "fr": "Heure prévue/estimée",
+            "en": "Scheduled/estimated time"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "fr": "Voie",
+            "en": "Platform"
+          }
+        }
+      ]
+    },
+    {
+      "key": "changement_voie",
+      "label": {
+        "fr": "Changement de voie",
+        "en": "Platform change"
+      },
+      "description": {
+        "fr": "Déclenché lorsqu’une voie change entre deux actualisations.",
+        "en": "Fires when the platform changes between refreshes."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "fr": "Train",
+            "en": "Train"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "station",
+          "type": "string",
+          "label": {
+            "fr": "Gare",
+            "en": "Station"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "fr": "Train",
+            "en": "Train"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "fr": "Destination",
+            "en": "Destination"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "fr": "Retard en minutes",
+            "en": "Delay in minutes"
+          }
+        },
+        {
+          "key": "departure_time",
+          "type": "string",
+          "label": {
+            "fr": "Heure prévue/estimée",
+            "en": "Scheduled/estimated time"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "fr": "Voie",
+            "en": "Platform"
+          }
+        },
+        {
+          "key": "previous_platform",
+          "type": "string",
+          "label": {
+            "fr": "Ancienne voie",
+            "en": "Previous platform"
+          }
         }
       ]
     }
@@ -259,6 +489,30 @@
             "fr": "Minutes avant le départ",
             "en": "Minutes until departure"
           }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "fr": "Voie",
+            "en": "Platform"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "fr": "Retard en minutes",
+            "en": "Delay in minutes"
+          }
+        },
+        {
+          "key": "cancelled",
+          "type": "boolean",
+          "label": {
+            "fr": "Train supprimé",
+            "en": "Train cancelled"
+          }
         }
       ],
       "fields": [
@@ -276,6 +530,19 @@
     }
   ],
   "widgets": [
+    {
+      "key": "gares_suivies",
+      "label": {
+        "fr": "Gares suivies",
+        "en": "Followed stations"
+      },
+      "description": {
+        "fr": "Liste des gares suivies. Supprimez un appareil Gladys pour arrêter son suivi.",
+        "en": "List of followed stations. Delete a Gladys device to stop following it."
+      },
+      "icon": "train",
+      "action_timeout_seconds": 10
+    },
     {
       "key": "tableau_gare_sncf",
       "label": {
@@ -298,6 +565,50 @@
             "en": "Station to display"
           },
           "required": true
+        },
+        {
+          "key": "line_filter",
+          "type": "string",
+          "label": {
+            "fr": "Filtre ligne/train",
+            "en": "Line/train filter"
+          }
+        },
+        {
+          "key": "destination_filter",
+          "type": "string",
+          "label": {
+            "fr": "Filtre destination",
+            "en": "Destination filter"
+          }
+        },
+        {
+          "key": "transport_filter",
+          "type": "string",
+          "label": {
+            "fr": "Filtre transport",
+            "en": "Transport filter"
+          }
+        },
+        {
+          "key": "limit",
+          "type": "number",
+          "label": {
+            "fr": "Nombre de trains",
+            "en": "Number of trains"
+          },
+          "default": 8,
+          "min": 1,
+          "max": 8
+        },
+        {
+          "key": "compact",
+          "type": "boolean",
+          "label": {
+            "fr": "Vue compacte (3 trains)",
+            "en": "Compact view (3 trains)"
+          },
+          "default": false
         }
       ]
     }

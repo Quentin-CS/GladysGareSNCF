@@ -15,9 +15,10 @@ La fréquence est réglable par gare. Une fréquence par défaut de 10 minutes l
 ## Fonctions Gladys
 
 - **Appareil** : un capteur historique « Minutes avant le prochain train » par gare sélectionnée.
-- **Widget** : tableau des 8 prochains trains d’une gare choisie, voie si disponible, horaire et badge de retard ; bouton d’actualisation.
-- **Déclencheur de scène** : « Train en retard », filtrable par gare, une fois par train observé lorsque le seuil configuré est atteint.
-- **Action de scène** : « Récupérer les prochains trains », avec une gare choisie parmi les appareils ajoutés.
+- **Widgets** : liste des gares suivies et tableau par gare avec vue compacte, compte à rebours, filtres d’affichage, fraîcheur des données et erreurs API.
+- **Filtres** : ligne/code du train, destination et type de transport.
+- **Déclencheurs de scène** : retard, suppression signalée par l’API et changement de voie comparé entre deux actualisations.
+- **Action de scène** : « Récupérer les prochains trains », avec une gare choisie et sortie voie/retard/suppression.
 - **Actions de configuration** : rechercher des gares et tester l’accès à l’API.
 
 ## Développement

@@ -12,6 +12,9 @@ export const SCENE_ACTIONS = {
       next_train: next?.code ?? '',
       destination: next?.direction ?? '',
       minutes: next ? minutes : -1,
+      platform: next?.platform ?? '',
+      delay_minutes: next?.delayMinutes ?? 0,
+      cancelled: next?.cancelled ?? false,
     };
   },
 };
