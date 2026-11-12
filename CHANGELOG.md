@@ -4,6 +4,12 @@ Les changements notables de GareSNCF sont consignés ici.
 
 ## [Unreleased]
 
+### Changed
+
+- Declared for France only (`countries: ["FR"]`): the Gladys catalog of an
+  instance located elsewhere no longer lists it in its browse views (the
+  search still finds it). Requires Gladys 5.3.0 or later.
+
 ## [2.1.1] - 2026-10-18
 
 ### Added
